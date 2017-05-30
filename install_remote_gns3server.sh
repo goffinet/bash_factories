@@ -21,6 +21,7 @@ ssh root@${publicip//\"/}
 ${publicip//\"/} ${server}
 
 EOF
+scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null root@${basename}:/root/install-log.txt /tmp/${basename}-install-log.txt
 cat /tmp/${server}* > /tmp/${server}-message.txt
 ssmtp $mailto < /tmp/${server}-message.txt
 rm -rf /tmp/${server}*
