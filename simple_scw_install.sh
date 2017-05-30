@@ -1,6 +1,6 @@
 #!/bin/bash
-region="par1" # 'par1' or 'ams1'
-type="VC1S" # 'VC1S' for test or 'C2S' for CCNA or or 'C2M' for advanced labs
+region="ams1" # 'par1' or 'ams1'
+type="VC1S" # 'VC1S' 'X64-2GB' for test or 'C2S' for CCNA or or 'C2M' for advanced labs
 basename=$@
 mailto="goffinet@goffinet.eu"
 mailfrom="lab@goffinet.eu"
@@ -29,16 +29,16 @@ rm -rf /tmp/${server}*
 scw_run () {
 for server in ${basename} ; do
 uuid=$(scw --region=${region} create --name="${server}" --commercial-type=${type} ${image})
-scw start -w ${uuid} &
+scw --region=${region} start -w ${uuid} &
 done
 wait $(jobs -p)
 }
 
 get_info() {
 for server in ${basename} ; do
-uuid=$(scw ps -a | grep "${server}" | awk '{print $1}')
-privateip=$(scw --region=${region} inspect ${uuid} | jq '.[0].private_ip')
-publicip=$(scw --region=${region} inspect ${uuid} | jq '.[0].public_ip.address')
+#uuid=$(scw ps | grep "${server}" | awk '{print $1}')
+#privateip=$(scw --region=${region} inspect ${uuid} | jq '.[0].private_ip')
+publicip=$(scw ps | grep ${server} | awk '{print $7}')
 echo "### added for ${server} at $(date) ###" >> /etc/hosts
 echo "${publicip//\"/} ${server}" >> /etc/hosts
 mailto_client
@@ -47,3 +47,5 @@ done
 
 scw_run
 get_info
+echo "Task executed"
+exit 0

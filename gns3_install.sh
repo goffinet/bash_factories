@@ -279,4 +279,4 @@ echo " " >> ~/install-log.txt
 
 apt-get -y install at fail2ban
 at tomorrow <<< 'apt-get -y remove nginx-light'
-shutdown -r now
+#shutdown -r now
