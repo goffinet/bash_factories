@@ -29,7 +29,7 @@ rm -rf /tmp/${server}*
 scw_run () {
 for server in ${basename} ; do
 uuid=$(scw --region=${region} create --name="${server}" --commercial-type=${type} ${image})
-scw --region=${region} start -w ${uuid} &
+scw --region=${region} start -w -T 180 ${uuid} &
 done
 wait $(jobs -p)
 }
