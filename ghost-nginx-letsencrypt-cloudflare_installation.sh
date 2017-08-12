@@ -34,15 +34,16 @@ apt-get update && apt-get -y upgrade && apt-get -y dist-upgrade
 ## 4. Create an DNS entry to Cloudflare
 
 set_dns () {
+## a. Install Curl
 apt-get -y install curl  
-## 2. Get Zone ID
+## b. Get Zone ID
 zones=`${curl_command} -s -X GET "${CF_API_URL}/zones?name=${CF_ZONE}" -H "X-Auth-Email: ${CF_EMAIL}" -H "X-Auth-Key: ${CF_TOKEN}" -H "Content-Type: application/json"`
 zone=$(echo "${zones}" | grep -Po '(?<="id":")[^"]*' | head -1)
-## 3. Get Record ID et IP Address of hostanme
+## c. Get Record ID et IP Address of hostanme
 records=`${curl_command} -s -X GET "${CF_API_URL}/zones/${zone}/dns_records?type=A&name=${CF_NAME}.${CF_ZONE}&page=1&per_page=20&order=type&direction=desc&match=all" -H "X-Auth-Email: ${CF_EMAIL}" -H "X-Auth-Key: ${CF_TOKEN}" -H "Content-Type: application/json"`
 records_id=`echo "${records}" | grep -Po '(?<="id":")[^"]*'`
 ip=`echo "${records}" | grep -Po '(?<="content":")[^"]*'`
-## Check if Record exists
+## d. Check if Record exists
 if [ "${ip}" == "${ip_wan}" ]; then
  echo "Noting to do"
 fi
