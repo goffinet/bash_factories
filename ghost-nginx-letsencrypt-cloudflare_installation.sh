@@ -296,13 +296,21 @@ systemctl stop $SITE.service ; systemctl start $SITE.service
 set_firewall () {
 apt-get install -y firewalld
 systemctl enable firewalld
-firewall-cmd --permanent --zone=public --add-service=https
-firewall-cmd --permanent --zone=public --add-service=http
-firewall-cmd --permanent --zone=public --add-interface=eth0
-firewall-cmd --reload
-firewall-cmd --permanent --zone=public --list-all
+#firewall-cmd --permanent --zone=public --add-service=https
+#firewall-cmd --permanent --zone=public --add-service=http
+#firewall-cmd --permanent --zone=public --add-interface=eth0
+#firewall-cmd --reload
+#firewall-cmd --permanent --zone=public --list-all
 apt-get install -y fail2ban
 systemctl enable fail2ban
+for i in $(curl "https://www.cloudflare.com/ips-v4"); do sudo firewall-cmd --permanent --zone=public --add-rich-rule 'rule family="ipv4" source address="'$i'" port port=80 protocol=tcp accept'; done
+for i in $(curl "https://www.cloudflare.com/ips-v4"); do sudo firewall-cmd --permanent --zone=public --add-rich-rule 'rule family="ipv4" source address="'$i'" port port=443 protocol=tcp accept'; done
+firewall-cmd --permanent --zone=public --add-rich-rule 'rule family="ipv4" source address="myip" port port=22 protocol=tcp accept'
+for i in $(curl "https://www.cloudflare.com/ips-v6"); do sudo firewall-cmd --permanent --zone=public --add-rich-rule 'rule family="ipv6" source address="'$i'" port port=80 protocol=tcp accept'; done
+for i in $(curl "https://www.cloudflare.com/ips-v6"); do sudo firewall-cmd --permanent --zone=public --add-rich-rule 'rule family="ipv6" source address="'$i'" port port=443 protocol=tcp accept'; done
+firewall-cmd --permanent --zone=public --add-rich-rule 'rule family="ipv4" source address="myip" port port=22 protocol=tcp accept'
+firewall-cmd --permanent --change-zone=eth0 --zone=public
+firewall-cmd --reload
 }
 
 ## 10. Upload some themes
